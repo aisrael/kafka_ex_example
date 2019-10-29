@@ -1,13 +1,17 @@
 version: "3"
 services:
+  zookeeper:
+    image: zookeeper:3.4.14
+    ports:
+      - 2181:2181
+    container_name: zookeeper
   kafka:
-    image: krisgeus/docker-kafka:latest
-    container_name: kafka
+    image: confluentinc/cp-kafka:5.3.0
     ports:
       - 9092:9092
     environment:
-      ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092,INTERNAL://localhost:9093"
-      LISTENERS: "PLAINTEXT://0.0.0.0:9092,INTERNAL://0.0.0.0:9093"
-      SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT"
-      INTER_BROKER: "INTERNAL"
-      KAFKA_CREATE_TOPICS: "example_topic:2:1"
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    container_name: kafka
