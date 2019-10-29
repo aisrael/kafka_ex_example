@@ -3,16 +3,30 @@ defmodule Hello do
   Documentation for Hello.
   """
 
+  alias KafkaEx.Protocol.Produce.{Message, Request}
+
+  require Logger
+
+  @topic "example_topic"
+
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Hello.hello()
-      :world
-
+  Send a message to Kafka using KafkaEx.
   """
-  def hello do
-    :world
+  def publish(s, key \\ nil) do
+    message = %Message{
+      key: key || s,
+      value: s
+    }
+
+    request = %Request{
+      topic: @topic,
+      messages: [message]
+    }
+
+    Logger.debug("KafkaEx.produce(#{inspect(request)})")
+
+    result = KafkaEx.produce(request)
+
+    Logger.debug("KafkaEx.produce(request) => #{inspect(result)}")
   end
 end
